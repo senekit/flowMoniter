@@ -6,6 +6,33 @@ from flask import g, jsonify, request
 
 speed_blueprint = Blueprint('speed', __name__, url_prefix='/speed' )
 
+sum= [0,0,0,0,0,0,0,0]
+
+@speed_blueprint.route('/sum',methods=['GET'])
+def getsum():
+    data = []
+    data.append({
+        "key": "以太网",
+        "in": sum[0],
+        "out": sum[1]
+    })
+    data.append({
+        "key": "以太网 2",
+        "in": sum[2],
+        "out": sum[3]
+    })
+    data.append({
+        "key": "Loopback Pseudo-Interface 1",
+        "in": sum[4],
+        "out": sum[5]
+    })
+    data.append({
+        "key": "vEthernet (Default Switch)",
+        "in": sum[6],
+        "out": sum[7]
+    })
+    return jsonify(data)
+
 @speed_blueprint.route('', methods=['GET'])
 def get_speed():
     data = []
@@ -13,17 +40,26 @@ def get_speed():
         key_info, net_in, net_out = get_rate(get_key)
 
         for key in key_info:
-            # lo 是linux的本机回环网卡，以太网是我win10系统的网卡名
-            a, b , c = get_key()
-            #print(b)
-            #print(c)
             if key != 'lo' or key == '以太网':
+
                 # print('%s\nInput:\t %-5sKB/s\nOutput:\t %-5sKB/s\n' % (key, net_in.get(key), net_out.get(key)))
                 data.append({
                     "key": key,
                     "in": net_in.get(key),
                     "out": net_out.get(key)
                 })
+                if key == '以太网':
+                    sum[0] += net_in.get(key)
+                    sum[1] += net_out.get(key)
+                elif key == '以太网 2':
+                    sum[2] += net_in.get(key)
+                    sum[3] += net_out.get(key)
+                elif key == 'Loopback Pseudo-Interface 1':
+                    sum[4] += net_in.get(key)
+                    sum[5] += net_out.get(key)
+                elif key == 'vEthernet (Default Switch)':
+                    sum[6] += net_in.get(key)
+                    sum[7] += net_out.get(key)
     except KeyboardInterrupt:
         exit()
     return jsonify(data)
