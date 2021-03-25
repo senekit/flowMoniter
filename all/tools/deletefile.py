@@ -43,5 +43,4 @@ def delete():
     for names in NEWLIST:
         # print('current file: %s' % (names))
         fileremove(names, 60)
-    # time.sleep(10)
-    # print("never arrive...")
+
