@@ -26,7 +26,7 @@ def create_app()->Flask:
     @flask_app.route('/')
     def start():
         while 1:
-            print("1")
+            # print("1")
             dpkt = sniff(count=10)
             wrpcap("all/pcaps/" + str(time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())) + ".pcap", dpkt)
 
